@@ -1,17 +1,15 @@
 const io = require('socket.io')();
 
-// generate userlist displayed on the right in browser
-let userlist = [];
+const userlist = [];
 
 function updateUserlist(action, sender) {
-  // add user to userlist
+  // add to userlist
   if (action === 'join') {
     userlist.push({
       username: sender,
     });
   }
-
-  // remove user from userlist
+  // remove from userlist
   else if (action === 'leave') {
     userlist.map((user, index) => {
       if (user.username === sender) {
@@ -21,13 +19,13 @@ function updateUserlist(action, sender) {
   }
 }
 
-// socket.io connection open
+// socket.io connection
 io.on('connection', function (socket) {
   // join
   socket.on('chat join', function (msg) {
-    //TODO: add user to userlist
+    //add user to userlist
     updateUserlist('join', msg.sender);
-    //TODO: send userlist
+    //send userlist
     io.emit('chat users', userlist);
     // send join message
     io.emit('chat join', msg);
@@ -35,9 +33,9 @@ io.on('connection', function (socket) {
 
   // leave
   socket.on('chat leave', function (msg) {
-    //TODO: remove user from userlist
+    //remove user from userlist
     updateUserlist('leave', msg.sender);
-    //TODO: send userlist
+    //send userlist
     io.emit('chat users', userlist);
     // send leave message
     io.emit('chat leave', msg);
