@@ -54,4 +54,6 @@ io.on('connection', function (socket: any) {
   });
 });
 
-io.listen(3001, () => console.log('Socket.io server running on port 3001'));
+io.listen(process.env.PORT || 3001, () =>
+  console.log('Socket.io server running on port 3001')
+);
