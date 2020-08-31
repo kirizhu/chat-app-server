@@ -1,10 +1,17 @@
 const io = require('socket.io')();
 
-const userlist = [];
+const userlist: { username: string }[] = [];
 
-function updateUserlist(action, sender) {
+interface message {
+  timestamp: string;
+  sender: string;
+  message: string;
+}
+
+function updateUserlist(action: string, sender: string) {
   // add to userlist
   if (action === 'join') {
+    console.log(userlist);
     userlist.push({
       username: sender,
     });
@@ -20,9 +27,9 @@ function updateUserlist(action, sender) {
 }
 
 // socket.io connection
-io.on('connection', function (socket) {
+io.on('connection', function (socket: any) {
   // join
-  socket.on('chat join', function (msg) {
+  socket.on('chat join', function (msg: message) {
     //add user to userlist
     updateUserlist('join', msg.sender);
     //send userlist
@@ -32,7 +39,7 @@ io.on('connection', function (socket) {
   });
 
   // leave
-  socket.on('chat leave', function (msg) {
+  socket.on('chat leave', function (msg: message) {
     //remove user from userlist
     updateUserlist('leave', msg.sender);
     //send userlist
@@ -42,10 +49,10 @@ io.on('connection', function (socket) {
   });
 
   // message
-  socket.on('chat message', function (msg) {
+  socket.on('chat message', function (msg: message) {
     // send message
     io.emit('chat message', msg);
   });
 });
 
-io.listen(3001);
+io.listen(3001, () => console.log('Socket.io server running on port 3001'));
