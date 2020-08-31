@@ -1,6 +1,6 @@
 const io = require('socket.io')();
 
-const userlist: { username: string }[] = [];
+const listOfUsers: { username: string }[] = [];
 
 interface message {
   timestamp: string;
@@ -8,19 +8,18 @@ interface message {
   message: string;
 }
 
-function updateUserlist(action: string, sender: string) {
-  // add to userlist
+function updateListOfUsers(action: string, sender: string) {
+  // add to listOfUsers
   if (action === 'join') {
-    console.log(userlist);
-    userlist.push({
+    listOfUsers.push({
       username: sender,
     });
   }
-  // remove from userlist
+  // remove from listOfUsers
   else if (action === 'leave') {
-    userlist.map((user, index) => {
+    listOfUsers.map((user, index) => {
       if (user.username === sender) {
-        userlist.splice(index, 1);
+        listOfUsers.splice(index, 1);
       }
     });
   }
@@ -30,20 +29,20 @@ function updateUserlist(action: string, sender: string) {
 io.on('connection', function (socket: any) {
   // join
   socket.on('chat join', function (msg: message) {
-    //add user to userlist
-    updateUserlist('join', msg.sender);
-    //send userlist
-    io.emit('chat users', userlist);
+    //add user to listOfUsers
+    updateListOfUsers('join', msg.sender);
+    //send listOfUsers
+    io.emit('chat users', listOfUsers);
     // send join message
     io.emit('chat join', msg);
   });
 
   // leave
   socket.on('chat leave', function (msg: message) {
-    //remove user from userlist
-    updateUserlist('leave', msg.sender);
-    //send userlist
-    io.emit('chat users', userlist);
+    //remove user from listOfUsers
+    updateListOfUsers('leave', msg.sender);
+    //send listOfUsers
+    io.emit('chat users', listOfUsers);
     // send leave message
     io.emit('chat leave', msg);
   });
